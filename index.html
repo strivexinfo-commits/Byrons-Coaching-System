@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching System</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f0f;color:#e8e6e0;min-height:100vh;}
+.top{background:#1a1a1a;border-bottom:1px solid #2a2a2a;padding:13px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
+.top h1{font-size:16px;font-weight:600;cursor:pointer;}
+.top .sp{margin-left:auto;display:flex;gap:8px;}
+.tbtn{padding:7px 13px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid #2a2a2a;background:#222;color:#bbb;}
+.tbtn:hover{background:#2a2a2a;color:#e8e6e0;}
+.tbtn.prim{background:#7F77DD;color:#fff;border-color:#7F77DD;}
+.wrap{max-width:720px;margin:0 auto;padding:18px 16px 50px;}
+.sechead{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin:18px 0 10px;}
+.sechead:first-child{margin-top:0;}
+.fu{background:#D4873A12;border:1px solid #D4873A33;border-radius:12px;padding:14px;margin-bottom:18px;}
+.fu-title{font-size:13px;font-weight:600;color:#D4873A;margin-bottom:10px;}
+.fu-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #D4873A22;cursor:pointer;}
+.fu-item:last-child{border-bottom:none;}
+.fu-name{font-size:13.5px;color:#e8e6e0;font-weight:500;}
+.fu-when{font-size:11.5px;color:#D4873A;}
+.fu-empty{font-size:12.5px;color:#888;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:520px){.grid{grid-template-columns:1fr;}}
+.ccard{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:14px;cursor:pointer;}
+.ccard:hover{border-color:#7F77DD55;}
+.cc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.cc-name{font-size:15px;font-weight:600;}
+.cc-status{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+.st-aktiv{background:#5DCAA522;color:#5DCAA5;}
+.st-pausiert{background:#C4A84222;color:#C4A842;}
+.st-abgeschlossen{background:#7F77DD22;color:#9B93F0;}
+.cc-pat{font-size:12px;color:#999;margin-bottom:10px;}
+.cc-meta{display:flex;gap:14px;font-size:11.5px;color:#777;}
+.cc-meta b{color:#aaa;font-weight:600;}
+.cc-ch{font-size:11px;color:#5DCAA5;margin-top:8px;}
+.back{font-size:13px;color:#7F77DD;cursor:pointer;margin-bottom:14px;display:inline-flex;align-items:center;gap:5px;}
+.dhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+.dname{font-size:22px;font-weight:600;}
+.dcontact{font-size:13px;color:#888;margin-top:2px;}
+.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:16px;margin-bottom:12px;}
+.lbl{font-size:10.5px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:520px){.row{grid-template-columns:1fr;}}
+input,select,textarea{width:100%;border:1px solid #2a2a2a;border-radius:8px;padding:9px 11px;font-size:13.5px;font-family:inherit;color:#e8e6e0;background:#111;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:#7F77DD;}
+textarea{resize:vertical;min-height:75px;line-height:1.6;}
+input::placeholder,textarea::placeholder{color:#555;}
+select option{background:#1a1a1a;}
+.mt{margin-top:10px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 17px;border-radius:8px;font-size:13.5px;font-weight:500;cursor:pointer;border:none;background:#7F77DD;color:#fff;}
+.btn:hover{background:#6B63CC;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn.ghost{background:#222;color:#bbb;border:1px solid #2a2a2a;}
+.btn.ghost:hover{background:#2a2a2a;color:#e8e6e0;}
+.btn.danger{background:#2a1a1a;color:#C95F4A;border:1px solid #C95F4A33;}
+.btn.green{background:#5DCAA5;color:#04342C;}
+.btn.green:hover{background:#4DBA95;}
+.btn.sm{padding:6px 12px;font-size:12px;}
+.sess{border-left:2px solid #2a2a2a;padding:0 0 4px 16px;margin-left:6px;position:relative;}
+.sess:before{content:'';position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:#7F77DD;border:2px solid #0f0f0f;}
+.sess-block{padding-bottom:18px;}
+.sess-date{font-size:11.5px;color:#777;margin-bottom:2px;}
+.sess-num{font-size:14px;font-weight:600;color:#9B93F0;margin-bottom:6px;}
+.sess-field{margin-bottom:8px;}
+.sess-fl{font-size:10px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;}
+.sess-ft{font-size:13px;color:#d0ceca;line-height:1.6;margin-top:2px;white-space:pre-wrap;}
+.audio-row{display:flex;align-items:center;gap:8px;margin-top:6px;padding:8px 10px;background:#111;border-radius:8px;}
+.audio-row audio{height:32px;flex:1;}
+.audio-name{font-size:11px;color:#888;}
+.empty{text-align:center;padding:40px 20px;color:#666;}
+.empty-icon{font-size:34px;margin-bottom:10px;opacity:.5;}
+.empty-t{font-size:14px;margin-bottom:14px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}
+.modal-bg.on{display:flex;}
+.modal{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:20px;max-width:560px;width:100%;}
+.modal h3{font-size:16px;font-weight:600;margin-bottom:14px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;}
+.hint{font-size:12px;color:#777;line-height:1.55;background:#7F77DD0D;border:1px solid #7F77DD22;border-radius:8px;padding:9px 12px;margin-top:10px;}
+.save-note{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#5DCAA5;color:#04342C;font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:20px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:300;}
+.save-note.on{opacity:1;}
+.chbox{background:#5DCAA50D;border:1px solid #5DCAA533;border-radius:12px;padding:16px;}
+.chbox-empty{background:#1a1a1a;border:1px dashed #2a2a2a;border-radius:12px;padding:18px;text-align:center;}
+.ch-step{margin-bottom:12px;}
+.ch-snum{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#5DCAA522;color:#5DCAA5;font-size:12px;font-weight:600;margin-right:8px;}
+.ch-sl{font-size:10px;font-weight:600;color:#5DCAA5;text-transform:uppercase;letter-spacing:.05em;}
+.ch-st{font-size:14px;color:#e0ded8;line-height:1.6;margin-top:5px;padding-left:30px;white-space:pre-wrap;}
+.ch-say{margin-top:12px;padding:11px 13px;background:#5DCAA512;border-radius:9px;font-size:13px;color:#bfe0d4;font-style:italic;line-height:1.6;}
+.ch-meta{font-size:11px;color:#777;margin-top:10px;}
+.prev{background:#111;border:1px solid #2a2a2a;border-radius:10px;padding:14px;margin-top:12px;}
+.loading{padding:14px;display:flex;align-items:center;gap:9px;color:#888;font-size:13px;}
+.dot{width:6px;height:6px;border-radius:50%;background:#5DCAA5;animation:pp 1.2s infinite;display:inline-block;}
+.dot:nth-child(2){animation-delay:.2s;}.dot:nth-child(3){animation-delay:.4s;}
+@keyframes pp{0%,80%,100%{opacity:.15;}40%{opacity:1;}}
+.an-block{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #222;}
+.an-block:last-child{border:none;margin:0;padding:0;}
+.an-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9B93F0;margin-bottom:5px;}
+.an-t{font-size:13px;color:#d0ceca;line-height:1.7;}
+.an-q{background:#7F77DD18;border:1px solid #7F77DD33;border-radius:8px;padding:9px 12px;font-size:13.5px;font-style:italic;color:#e0ded8;margin:4px 0;}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1 onclick="goDash()">⚙ Coaching System</h1>
+  <div class="sp">
+    <button class="tbtn" onclick="doExport()">↓ Backup</button>
+    <button class="tbtn" onclick="document.getElementById('imp').click()">↑ Laden</button>
+    <input type="file" id="imp" accept="application/json" style="display:none" onchange="doImport(event)">
+    <button class="tbtn prim" onclick="openNew()">+ Neuer Klient</button>
+  </div>
+</div>
+
+<div class="wrap" id="app"></div>
+<div class="modal-bg" id="modal-bg"><div class="modal" id="modal"></div></div>
+<div class="save-note" id="save-note">Gespeichert ✓</div>
+
+<script>
+let DB={clients:[]};
+function load(){ try{const s=localStorage.getItem('coaching_crm');if(s)DB=JSON.parse(s);}catch(e){DB={clients:[]};} if(!DB.clients)DB.clients=[]; }
+function save(){ try{localStorage.setItem('coaching_crm',JSON.stringify(DB));toast();}catch(e){alert('Speichern fehlgeschlagen.');} }
+function toast(){ const n=document.getElementById('save-note');if(!n)return;n.classList.add('on');setTimeout(()=>n.classList.remove('on'),1400); }
+function uid(){ return 'id'+Date.now()+Math.floor(Math.random()*1000); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let idb=null;
+function idbOpen(){ return new Promise((res,rej)=>{if(idb)return res(idb);const r=indexedDB.open('coaching_audio',1);r.onupgradeneeded=e=>{e.target.result.createObjectStore('audio',{keyPath:'id'});};r.onsuccess=e=>{idb=e.target.result;res(idb);};r.onerror=e=>rej(e);}); }
+async function audioPut(id,blob,name){ const db=await idbOpen();return new Promise((res,rej)=>{const tx=db.transaction('audio','readwrite');tx.objectStore('audio').put({id,blob,name});tx.oncomplete=()=>res();tx.onerror=e=>rej(e);}); }
+async function audioGet(id){ try{const db=await idbOpen();return new Promise((res,rej)=>{const tx=db.transaction('audio','readonly');const rq=tx.objectStore('audio').get(id);rq.onsuccess=()=>res(rq.result);rq.onerror=e=>rej(e);});}catch(e){return null;} }
+async function audioDel(id){ try{const db=await idbOpen();return new Promise((res)=>{const tx=db.transaction('audio','readwrite');tx.objectStore('audio').delete(id);tx.oncomplete=()=>res();});}catch(e){return;} }
+
+function today(){ return new Date().toISOString().slice(0,10); }
+function fmtDate(d){ if(!d)return '—';const p=d.split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:d; }
+function daysUntil(d){ if(!d)return null;const t=new Date(today());const x=new Date(d);return Math.round((x-t)/86400000); }
+
+// ===== KI-ANRUF über geschützte Server-Funktion =====
+async function callAI(system, content){
+  const r=await fetch('/api/analyse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system,content})});
+  const d=await r.json();
+  if(d.error) throw new Error(d.error);
+  return d.text;
+}
+
+const COACH_SYS = `Du bist der KI-Analyse-Assistent für einen Coach der Männer (18-35) mit Beziehungsproblemen und Selbstkontrolle hilft.
+
+SEIN COACHING-STIL (heilig, immer einhalten):
+- Der Klient findet SEINE eigene Lösung — der Coach gibt NIEMALS die Lösung vor
+- Durch Fragen den eigenen Schmerz sichtbar machen, bis der Mann selbst sagt: "So geht das nicht weiter, ich muss etwas ändern"
+- Keine Therapie — sondern durchfragen bis zur eigenen Einsicht
+- Die Person ist nie das Problem — das Muster (Programm) ist das Problem
+- Arrested Development: Teile von uns hören auf zu wachsen wenn wir uns unsicher fühlen
+- Menschen haben Angst vorm Ergebnis, nicht vor der Handlung
+- Sprache verrät Überzeugungen
+- Mirroring (Chris Voss): letzte 2-3 Worte zurückgeben, Pause
+- Schweigen ist das stärkste Werkzeug
+
+DIE 3 MUSTER: 1) Angst vor Verlust 2) Alte Wunden (reagiert auf Vergangenheit) 3) Keine Sprache für Gefühle
+6 TIEFEN-EBENEN: 1 Oberfläche, 2 Muster, 3 Glauben, 4 Angst, 5 Ursprung, 6 Identität
+
+EINE TINY CHALLENGE hat 3 Teile: (1) eine kleine Handlung, (2) was er beobachtet, (3) die Frage die ER selbst beantwortet. Sie gibt NIE die Lösung vor — sie lässt ihn selbst entdecken. Klein, machbar, auf SEINEN konkreten Schmerz gebaut.
+
+Jeder Mann ist anders. Baue alles individuell auf seine konkreten Worte und Gefühle. Alle Antworten auf Deutsch, klar, direkt, kurze Sätze.`;
+
+let VIEW={name:'dash',id:null};
+function goDash(){VIEW={name:'dash',id:null};render();}
+function goClient(id){VIEW={name:'client',id:id};render();}
+function getClient(id){return DB.clients.find(c=>c.id===id);}
+
+function render(){ const app=document.getElementById('app'); if(VIEW.name==='dash')app.innerHTML=renderDash(); else if(VIEW.name==='client'){app.innerHTML=renderClient(VIEW.id);hydrateAudio();} }
+function renderDash(){
+  let h='';
+  const fus=DB.clients.filter(c=>c.nextFollowUp&&c.status!=='abgeschlossen').map(c=>({c,d:daysUntil(c.nextFollowUp)})).filter(o=>o.d!==null&&o.d<=7).sort((a,b)=>a.d-b.d);
+  h+='<div class="fu"><div class="fu-title">📌 Diese Woche nachfassen</div>';
+  if(fus.length===0)h+='<div class="fu-empty">Niemand fällig. Setz bei einem Klienten ein „Nächster Kontakt"-Datum.</div>';
+  else fus.forEach(o=>{let w=o.d<0?'überfällig ('+(-o.d)+' Tg)':o.d===0?'heute':o.d===1?'morgen':'in '+o.d+' Tagen';h+='<div class="fu-item" onclick="goClient(\''+o.c.id+'\')"><span class="fu-name">'+esc(o.c.name)+'</span><span class="fu-when">'+w+'</span></div>';});
+  h+='</div>';
+  h+='<div class="sechead">Alle Klienten ('+DB.clients.length+')</div>';
+  if(DB.clients.length===0)h+='<div class="empty"><div class="empty-icon">👤</div><div class="empty-t">Noch keine Klienten.<br>Füg deinen ersten hinzu.</div><button class="btn" onclick="openNew()">+ Erster Klient</button></div>';
+  else{ h+='<div class="grid">'; DB.clients.forEach(c=>{const ch=(c.challenges&&c.challenges.length)?c.challenges[c.challenges.length-1]:null;h+='<div class="ccard" onclick="goClient(\''+c.id+'\')"><div class="cc-top"><span class="cc-name">'+esc(c.name)+'</span><span class="cc-status st-'+(c.status||'aktiv')+'">'+(c.status||'aktiv')+'</span></div><div class="cc-pat">'+(c.pattern?esc(c.pattern):'Muster noch offen')+'</div><div class="cc-meta"><span><b>Sitzung</b> '+(c.session||1)+'</span><span><b>Ebene</b> '+(c.level||1)+'</span><span><b>'+(c.sessions?c.sessions.length:0)+'</b> Gespräche</span></div>'+(ch?'<div class="cc-ch">✓ Aktive Challenge läuft</div>':'')+'</div>';}); h+='</div>'; }
+  return h;
+}
+function renderClient(id){
+  const c=getClient(id); if(!c)return '<div class="empty">Klient nicht gefunden.</div>';
+  let h='<span class="back" onclick="goDash()">← Übersicht</span>';
+  h+='<div class="dhead"><div><div class="dname">'+esc(c.name)+'</div><div class="dcontact">'+(c.contact?esc(c.contact):'kein Kontakt')+(c.age?' · '+esc(c.age)+' J.':'')+'</div></div></div>';
+  h+='<div class="sechead">Individuelle Tiny Challenge</div>';
+  const ch=(c.challenges&&c.challenges.length)?c.challenges[c.challenges.length-1]:null;
+  if(ch){
+    h+='<div class="chbox"><div class="ch-step"><span class="ch-snum">1</span><span class="ch-sl">Handlung</span><div class="ch-st">'+esc(ch.action)+'</div></div><div class="ch-step"><span class="ch-snum">2</span><span class="ch-sl">Beobachten</span><div class="ch-st">'+esc(ch.observe)+'</div></div><div class="ch-step"><span class="ch-snum">3</span><span class="ch-sl">Seine Frage</span><div class="ch-st">'+esc(ch.question)+'</div></div>'+(ch.say?'<div class="ch-say"><b>So gibst du sie ihm:</b> '+esc(ch.say)+'</div>':'')+'<div class="ch-meta">'+fmtDate(ch.date)+'</div><div class="mt"><button class="btn green sm" onclick="copyChallenge(\''+id+'\')">📋 Text zum Senden kopieren</button> <button class="btn ghost sm" onclick="openChallenge(\''+id+'\')">Neue erstellen</button></div></div>';
+  } else {
+    h+='<div class="chbox-empty"><div style="font-size:13px;color:#888;margin-bottom:12px;">Noch keine Challenge für '+esc(c.name)+'.</div><button class="btn green" onclick="openChallenge(\''+id+'\')">✦ Individuelle Challenge erstellen</button></div>';
+  }
+  h+='<div class="sechead">Profil</div><div class="card"><div class="row"><div><div class="lbl">Muster</div><select onchange="upd(\''+id+'\',\'pattern\',this.value)">'+opt(['','Angst vor Verlust','Alte Wunden','Keine Sprache für Gefühle','Mischung'],c.pattern)+'</select></div><div><div class="lbl">Status</div><select onchange="upd(\''+id+'\',\'status\',this.value)">'+opt(['aktiv','pausiert','abgeschlossen'],c.status||'aktiv')+'</select></div></div><div class="row mt"><div><div class="lbl">Aktuelle Sitzung</div><input type="number" min="1" value="'+(c.session||1)+'" onchange="upd(\''+id+'\',\'session\',this.value)"></div><div><div class="lbl">Tiefen-Ebene (1-6)</div><input type="number" min="1" max="6" value="'+(c.level||1)+'" onchange="upd(\''+id+'\',\'level\',this.value)"></div></div><div class="mt"><div class="lbl">Sein Hauptschmerz (seine Worte)</div><textarea onchange="upd(\''+id+'\',\'goal\',this.value)" placeholder="Der EINE Schmerz auf den ihr euch fokussiert">'+esc(c.goal)+'</textarea></div><div class="row mt"><div><div class="lbl">Letzter Kontakt</div><input type="date" value="'+(c.lastContact||'')+'" onchange="upd(\''+id+'\',\'lastContact\',this.value)"></div><div><div class="lbl">Nächster Kontakt</div><input type="date" value="'+(c.nextFollowUp||'')+'" onchange="upd(\''+id+'\',\'nextFollowUp\',this.value)"></div></div></div>';
+  h+='<div class="sechead">Gespräche</div><div class="card">';
+  if(!c.sessions||c.sessions.length===0)h+='<div style="font-size:12.5px;color:#777;margin-bottom:12px;">Noch kein Gespräch festgehalten.</div>';
+  else{ const sorted=c.sessions.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')); sorted.forEach(s=>{h+='<div class="sess"><div class="sess-block"><div class="sess-date">'+fmtDate(s.date)+'</div><div class="sess-num">Gespräch '+(s.number||'?')+'</div>'+field('Was kam raus',s.summary)+field('Erkanntes Muster',s.pattern)+field('Analyse',s.analysis)+field('Hausaufgabe / Challenge',s.homework)+field('Nächste Frage',s.nextQuestion)+(s.audioId?'<div class="audio-row" data-audio="'+s.audioId+'"><span class="audio-name">🎙 Memo wird geladen…</span></div>':'')+'<button class="btn ghost sm mt" onclick="delSession(\''+id+'\',\''+s.id+'\')">Löschen</button></div></div>';}); }
+  h+='<button class="btn mt" onclick="openSession(\''+id+'\')">+ Gespräch hinzufügen</button></div>';
+  h+='<div class="sechead">Notizen</div><div class="card"><textarea onchange="upd(\''+id+'\',\'notes\',this.value)" placeholder="Alles was du dir merken willst..." style="min-height:90px;">'+esc(c.notes)+'</textarea></div>';
+  h+='<button class="btn danger mt" onclick="delClient(\''+id+'\')">Klient löschen</button>';
+  return h;
+}
+function field(l,v){ if(!v)return '';return '<div class="sess-field"><div class="sess-fl">'+l+'</div><div class="sess-ft">'+esc(v)+'</div></div>'; }
+function opt(arr,sel){ return arr.map(v=>'<option value="'+esc(v)+'"'+(v===sel?' selected':'')+'>'+(v===''?'—':esc(v))+'</option>').join(''); }
+async function hydrateAudio(){ const rows=document.querySelectorAll('[data-audio]');for(const row of rows){const aid=row.getAttribute('data-audio');const rec=await audioGet(aid);if(rec&&rec.blob){const url=URL.createObjectURL(rec.blob);row.innerHTML='<audio controls src="'+url+'"></audio><span class="audio-name">'+esc(rec.name||'Memo')+'</span>';}else row.innerHTML='<span class="audio-name">🎙 Memo nicht gefunden</span>';} }
+
+function upd(id,key,val){ const c=getClient(id);if(!c)return;if(key==='session'||key==='level')val=parseInt(val)||1;c[key]=val;save();if(key==='status'||key==='pattern')render(); }
+function delClient(id){ if(!confirm('Diesen Klienten wirklich löschen?'))return;const c=getClient(id);if(c&&c.sessions)c.sessions.forEach(s=>{if(s.audioId)audioDel(s.audioId);});DB.clients=DB.clients.filter(x=>x.id!==id);save();goDash(); }
+function delSession(cid,sid){ if(!confirm('Dieses Gespräch löschen?'))return;const c=getClient(cid);if(!c)return;const s=c.sessions.find(x=>x.id===sid);if(s&&s.audioId)audioDel(s.audioId);c.sessions=c.sessions.filter(x=>x.id!==sid);save();render(); }
+
+function showModal(html){document.getElementById('modal').innerHTML=html;document.getElementById('modal-bg').classList.add('on');}
+function closeModal(){document.getElementById('modal-bg').classList.remove('on');}
+document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
+
+function openNew(){
+  showModal('<h3>Neuer Klient</h3><div class="lbl">Name</div><input id="m-name" placeholder="Vorname oder Spitzname"><div class="mt"><div class="lbl">Kontakt</div><input id="m-contact" placeholder="@... oder Nummer"></div><div class="row mt"><div><div class="lbl">Alter</div><input id="m-age" placeholder="z.B. 24"></div><div><div class="lbl">Status</div><select id="m-status"><option value="aktiv">aktiv</option><option value="pausiert">pausiert</option></select></div></div><div class="mt"><div class="lbl">Sein Hauptschmerz</div><textarea id="m-goal" placeholder="z.B. explodiert wenn sie spät antwortet"></textarea></div><div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Abbrechen</button><button class="btn" onclick="saveNew()">Hinzufügen</button></div>');
+  setTimeout(()=>{const e=document.getElementById('m-name');if(e)e.focus();},50);
+}
+function saveNew(){ const name=document.getElementById('m-name').value.trim();if(!name){alert('Bitte einen Namen eingeben.');return;}const c={id:uid(),name,contact:document.getElementById('m-contact').value.trim(),age:document.getElementById('m-age').value.trim(),status:document.getElementById('m-status').value,goal:document.getElementById('m-goal').value.trim(),pattern:'',session:1,level:1,created:today(),lastContact:today(),nextFollowUp:'',sessions:[],challenges:[],notes:''};DB.clients.unshift(c);save();closeModal();goClient(c.id); }
+
+function openSession(cid){
+  const c=getClient(cid);const n=(c.sessions?c.sessions.length:0)+1;
+  showModal('<h3>Gespräch festhalten</h3><div class="row"><div><div class="lbl">Datum</div><input type="date" id="s-date" value="'+today()+'"></div><div><div class="lbl">Gespräch Nr.</div><input type="number" id="s-num" min="1" value="'+n+'"></div></div><div class="mt"><div class="lbl">Was kam raus? (frei, oder Memo-Transkript einfügen)</div><textarea id="s-sum" placeholder="Wie lief das Gespräch? Was hat er erzählt? Worauf reagierte er emotional?" style="min-height:110px;"></textarea></div><div class="mt"><div class="lbl">Erkanntes Muster</div><select id="s-pat">'+opt(['','Angst vor Verlust','Alte Wunden','Keine Sprache für Gefühle','Mischung','noch unklar'],c.pattern||'')+'</select></div><div class="mt"><div class="lbl">Sprachmemo (optional)</div><input type="file" id="s-audio" accept="audio/*"><div class="hint">Memo vom Handy hochladen — bleibt auf deinem Gerät gespeichert.</div></div><div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Abbrechen</button><button class="btn green" id="s-analyse" onclick="analyseSession(\''+cid+'\')">✦ Analysieren</button><button class="btn" id="s-save" onclick="saveSession(\''+cid+'\')">Nur speichern</button></div><div id="s-result"></div>');
+}
+let LAST_ANALYSIS=null;
+async function analyseSession(cid){
+  const c=getClient(cid);if(!c)return;
+  const sum=document.getElementById('s-sum').value.trim();
+  if(!sum){alert('Bitte erst beschreiben was im Gespräch rauskam.');return;}
+  const btn=document.getElementById('s-analyse');btn.disabled=true;
+  const res=document.getElementById('s-result');
+  res.innerHTML='<div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Analysiere individuell für '+esc(c.name)+'…</div>';
+  const sys=COACH_SYS+`
+
+AUFGABE: Der Coach beschreibt ein Gespräch mit diesem Mann. Analysiere INDIVIDUELL auf seine konkreten Worte. Gib NIEMALS die Lösung vor.
+
+Antworte EXAKT in diesem Format (genau diese Überschriften):
+###MUSTER###
+(Welches der 3 Muster — kurz begründet auf seine Worte)
+###ANALYSE###
+(3-5 Sätze: was unter der Oberfläche liegt, sein eigentlicher Schmerz, auf welcher Ebene er ist — individuell auf ihn)
+###FRAGEN###
+(3 maßgeschneiderte Fragen fürs nächste Gespräch, jede mit "- " davor, aus SEINEN Worten gebaut, die ihn tiefer führen)
+###CHALLENGE_ACTION###
+(Die kleine Handlung — eine konkrete Aufgabe auf seinen Schmerz)
+###CHALLENGE_OBSERVE###
+(Was er beobachten soll — ohne zu verändern)
+###CHALLENGE_QUESTION###
+(Die eine Frage die ER selbst beantwortet — wo seine Erkenntnis entsteht)
+###CHALLENGE_SAY###
+(Der genaue Satz mit dem der Coach die Challenge übergibt)
+###NEXT###
+(Womit der Coach das nächste Gespräch beginnt — eine Frage)`;
+  try{
+    const txt=await callAI(sys,'Muster bisher: '+(c.pattern||'unklar')+'\nSitzung: '+(c.session||1)+'\n\nWas im Gespräch rauskam:\n'+sum);
+    LAST_ANALYSIS=parseAnalysis(txt);
+    res.innerHTML=renderAnalysis(LAST_ANALYSIS)+'<div class="modal-actions"><button class="btn green" onclick="saveSession(\''+cid+'\',true)">Speichern & Challenge zuordnen</button></div>';
+  }catch(e){ res.innerHTML='<div class="hint" style="color:#E88070;border-color:#C95F4A44;background:#C95F4A12;">Fehler: '+esc(e.message)+'<br>Prüf ob der KI-Schlüssel richtig eingerichtet ist.</div>'; }
+  btn.disabled=false;
+}
+function parseAnalysis(txt){
+  function grab(tag,next){ const re=new RegExp('###'+tag+'###([\\s\\S]*?)(?:###'+next+'###|$)'); const m=txt.match(re); return m?m[1].trim():''; }
+  return {
+    muster:grab('MUSTER','ANALYSE'),
+    analyse:grab('ANALYSE','FRAGEN'),
+    fragen:grab('FRAGEN','CHALLENGE_ACTION'),
+    action:grab('CHALLENGE_ACTION','CHALLENGE_OBSERVE'),
+    observe:grab('CHALLENGE_OBSERVE','CHALLENGE_QUESTION'),
+    question:grab('CHALLENGE_QUESTION','CHALLENGE_SAY'),
+    say:grab('CHALLENGE_SAY','NEXT'),
+    next:grab('NEXT','ENDE')
+  };
+}
+function renderAnalysis(a){
+  let fragenHtml=a.fragen.split('\n').filter(l=>l.trim()).map(l=>'<div class="an-q">'+esc(l.replace(/^-\s*/,''))+'</div>').join('');
+  return '<div class="prev">'+
+    '<div class="an-block"><div class="an-l">Muster</div><div class="an-t">'+esc(a.muster)+'</div></div>'+
+    '<div class="an-block"><div class="an-l">Analyse</div><div class="an-t">'+esc(a.analyse)+'</div></div>'+
+    '<div class="an-block"><div class="an-l">Fragen fürs nächste Gespräch</div>'+fragenHtml+'</div>'+
+    '<div class="an-block"><div class="an-l">Seine Tiny Challenge</div><div class="an-t"><b>1) </b>'+esc(a.action)+'<br><b>2) Beobachten: </b>'+esc(a.observe)+'<br><b>3) Seine Frage: </b>'+esc(a.question)+'</div></div>'+
+    '<div class="an-block"><div class="an-l">Nächstes Gespräch starten mit</div><div class="an-q">'+esc(a.next)+'</div></div>'+
+  '</div>';
+}
+async function saveSession(cid,withAnalysis){
+  const c=getClient(cid);if(!c)return;
+  const btn=document.getElementById('s-save');if(btn){btn.disabled=true;}
+  const a=withAnalysis?LAST_ANALYSIS:null;
+  const s={id:uid(),date:document.getElementById('s-date').value||today(),number:parseInt(document.getElementById('s-num').value)||1,summary:document.getElementById('s-sum').value.trim(),pattern:(a&&a.muster)?a.muster:document.getElementById('s-pat').value,analysis:a?a.analyse:'',homework:a?('1) '+a.action+'  2) '+a.observe+'  3) '+a.question):'',nextQuestion:a?a.next:'',audioId:null};
+  const f=document.getElementById('s-audio').files[0];
+  if(f){try{const aid=uid();await audioPut(aid,f,f.name);s.audioId=aid;}catch(e){alert('Audio konnte nicht gespeichert werden.');}}
+  if(!c.sessions)c.sessions=[];c.sessions.push(s);
+  if(a){ if(!c.challenges)c.challenges=[];c.challenges.push({id:uid(),date:today(),action:a.action,observe:a.observe,question:a.question,say:a.say}); if(a.muster&&!c.pattern)c.pattern=detectPattern(a.muster); }
+  else if(s.pattern&&s.pattern!=='noch unklar'&&!c.pattern)c.pattern=s.pattern;
+  c.session=Math.max(c.session||1,s.number);c.lastContact=s.date;
+  save();LAST_ANALYSIS=null;closeModal();render();
+}
+function detectPattern(t){ if(/verlust|verlassen|eifersucht|klammer/i.test(t))return 'Angst vor Verlust';if(/wunde|kindheit|vergangenheit|früher/i.test(t))return 'Alte Wunden';if(/sprache|gefühl|wut|explod/i.test(t))return 'Keine Sprache für Gefühle';return ''; }
+
+function openChallenge(cid){
+  const c=getClient(cid);if(!c)return;
+  showModal('<h3>Individuelle Challenge für '+esc(c.name)+'</h3><div class="lbl">Was kam im Gespräch raus? (seine Worte, Gefühle, sein Schmerz)</div><textarea id="ch-in" placeholder="Beschreib was er gesagt hat, worauf er reagiert hat, was unter der Oberfläche war..." style="min-height:120px;">'+esc(c.goal||'')+'</textarea><div class="row mt"><div><div class="lbl">Phase</div><select id="ch-stage"><option value="1">1 · Beobachten</option><option value="2">2 · Auslöser finden</option><option value="3">3 · Wurzel verstehen</option><option value="4">4 · Neue Reaktion</option><option value="5">5 · Vertiefen</option></select></div><div><div class="lbl">Muster (optional)</div><select id="ch-pat">'+opt(['','Angst vor Verlust','Alte Wunden','Keine Sprache für Gefühle'],c.pattern)+'</select></div></div><button class="btn green mt" id="ch-go" onclick="runChallenge(\''+cid+'\')">✦ Individuell berechnen</button><div id="ch-preview"></div><div class="modal-actions" id="ch-actions" style="display:none"><button class="btn ghost" onclick="closeModal()">Abbrechen</button><button class="btn green" onclick="saveChallenge(\''+cid+'\')">Speichern & zuordnen</button></div>');
+}
+let LAST_CH=null;
+async function runChallenge(cid){
+  const c=getClient(cid);
+  const inp=document.getElementById('ch-in').value.trim();
+  if(!inp){alert('Bitte beschreib erst was im Gespräch rauskam.');return;}
+  const stage=document.getElementById('ch-stage').value;
+  const pat=document.getElementById('ch-pat').value;
+  const btn=document.getElementById('ch-go');btn.disabled=true;
+  const p=document.getElementById('ch-preview');
+  p.innerHTML='<div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Baue individuell für '+esc(c.name)+'…</div>';
+  const sys=COACH_SYS+`
+
+AUFGABE: Baue eine INDIVIDUELLE Tiny Challenge für genau diesen Mann, auf seine konkreten Worte. Phase: ${stage}. Gib NIE die Lösung vor.
+
+Antworte EXAKT in diesem Format:
+###ACTION###
+(die kleine Handlung)
+###OBSERVE###
+(was er beobachtet, ohne zu verändern)
+###QUESTION###
+(die eine Frage die ER selbst beantwortet)
+###SAY###
+(der genaue Satz zum Übergeben)`;
+  try{
+    const txt=await callAI(sys,'Muster: '+(pat||'unklar')+'\nPhase: '+stage+'\n\nWas im Gespräch rauskam:\n'+inp);
+    function grab(tag,next){const re=new RegExp('###'+tag+'###([\\s\\S]*?)(?:###'+next+'###|$)');const m=txt.match(re);return m?m[1].trim():'';}
+    LAST_CH={action:grab('ACTION','OBSERVE'),observe:grab('OBSERVE','QUESTION'),question:grab('QUESTION','SAY'),say:grab('SAY','ENDE')};
+    p.innerHTML='<div class="prev"><div class="ch-step"><span class="ch-snum">1</span><span class="ch-sl">Handlung</span><div class="ch-st">'+esc(LAST_CH.action)+'</div></div><div class="ch-step"><span class="ch-snum">2</span><span class="ch-sl">Beobachten</span><div class="ch-st">'+esc(LAST_CH.observe)+'</div></div><div class="ch-step"><span class="ch-snum">3</span><span class="ch-sl">Seine Frage</span><div class="ch-st">'+esc(LAST_CH.question)+'</div></div><div class="ch-say"><b>So gibst du sie ihm:</b> '+esc(LAST_CH.say)+'</div></div>';
+    document.getElementById('ch-actions').style.display='flex';
+  }catch(e){ p.innerHTML='<div class="hint" style="color:#E88070;border-color:#C95F4A44;background:#C95F4A12;">Fehler: '+esc(e.message)+'</div>'; }
+  btn.disabled=false;
+}
+function saveChallenge(cid){ const c=getClient(cid);if(!c||!LAST_CH)return;if(!c.challenges)c.challenges=[];c.challenges.push(Object.assign({},LAST_CH,{id:uid(),date:today()}));c.lastContact=today();save();LAST_CH=null;closeModal();render(); }
+function copyChallenge(cid){ const c=getClient(cid);if(!c||!c.challenges||!c.challenges.length)return;const ch=c.challenges[c.challenges.length-1];const txt='DEINE CHALLENGE DIESE WOCHE\n\n1) '+ch.action+'\n\n2) Beobachten: '+ch.observe+'\n\n3) Die Frage für dich: '+ch.question;try{navigator.clipboard.writeText(txt);toast();}catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast();}catch(e2){alert(txt);}document.body.removeChild(ta);} }
+
+async function doExport(){ const out={version:3,exported:today(),clients:DB.clients,audio:[]};try{for(const c of DB.clients){if(c.sessions)for(const s of c.sessions){if(s.audioId){const rec=await audioGet(s.audioId);if(rec&&rec.blob){const b64=await blobToB64(rec.blob);out.audio.push({id:s.audioId,name:rec.name,data:b64,type:rec.blob.type});}}}}}catch(e){}const blob=new Blob([JSON.stringify(out)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='coaching-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url); }
+function blobToB64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(blob);});}
+function b64ToBlob(b64,type){const parts=b64.split(',');const bin=atob(parts[1]);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:type||'audio/mpeg'});}
+async function doImport(ev){ const f=ev.target.files[0];if(!f)return;if(!confirm('Backup laden? Das ersetzt deine aktuellen Daten.')){ev.target.value='';return;}try{const text=await f.text();const data=JSON.parse(text);DB.clients=data.clients||[];if(data.audio)for(const a of data.audio){try{await audioPut(a.id,b64ToBlob(a.data,a.type),a.name);}catch(e){}}save();goDash();alert('Backup geladen ✓');}catch(e){alert('Datei konnte nicht gelesen werden.');}ev.target.value=''; }
+
+load();render();
+</script>
+</body>
+</html>
